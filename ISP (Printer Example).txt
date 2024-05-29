@@ -1,0 +1,118 @@
+using System;
+
+public interface IPrinter
+{
+    void Print(string document);
+    void Scan(string document);
+    void Fax(string document);
+}
+
+public class BasicPrinter : IPrinter
+{
+    public void Print(string document)
+    {
+        Console.WriteLine("Printing document: " + document);
+    }
+
+    public void Scan(string document)
+    {
+        throw new NotImplementedException("Scan not supported.");
+    }
+
+    public void Fax(string document)
+    {
+        throw new NotImplementedException("Fax not supported.");
+    }
+}
+
+
+public class Program
+{
+    public static void Main()
+    {
+        IPrinter printer = new BasicPrinter();
+        printer.Print("My Document");  // Works fine: Outputs "Printing document: My Document"
+
+        // The following calls will throw NotImplementedException
+        try
+        {
+            printer.Scan("My Document");
+        }
+        catch (NotImplementedException e)
+        {
+            Console.WriteLine(e.Message);  // Outputs "Scan not supported."
+        }
+
+        try
+        {
+            printer.Fax("My Document");
+        }
+        catch (NotImplementedException e)
+        {
+            Console.WriteLine(e.Message);  // Outputs "Fax not supported."
+        }
+    }
+}
+
+
+/// after apply ISP
+using System;
+
+public interface IPrinter
+{
+    void Print(string document);
+}
+
+public interface IScanner
+{
+    void Scan(string document);
+}
+
+public interface IFax
+{
+    void Fax(string document);
+}
+
+public class BasicPrinter : IPrinter
+{
+    public void Print(string document)
+    {
+        Console.WriteLine("Printing document: " + document);
+    }
+}
+
+public class AdvancedPrinter : IPrinter, IScanner, IFax
+{
+    public void Print(string document)
+    {
+        Console.WriteLine("Printing document: " + document);
+    }
+
+    public void Scan(string document)
+    {
+        Console.WriteLine("Scanning document: " + document);
+    }
+
+    public void Fax(string document)
+    {
+        Console.WriteLine("Faxing document: " + document);
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        IPrinter basicPrinter = new BasicPrinter();
+        basicPrinter.Print("My Document");  // Outputs: "Printing document: My Document"
+
+        IPrinter advancedPrinter = new AdvancedPrinter();
+        advancedPrinter.Print("My Document");  // Outputs: "Printing document: My Document"
+
+        IScanner scanner = new AdvancedPrinter();
+        scanner.Scan("My Document");  // Outputs: "Scanning document: My Document"
+
+        IFax fax = new AdvancedPrinter();
+        fax.Fax("My Document");  // Outputs: "Faxing document: My Document"
+    }
+}
